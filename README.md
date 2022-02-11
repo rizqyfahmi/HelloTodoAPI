@@ -5,6 +5,6 @@ An implementation of Clean Architecture in Go projects based on Echo Framework.
 - golang-migrate
 - docker & docker-compose
 
-## Run Prject
+## Run Project
 - Use ```make run``` to build and run ```docker-compose up``` and migration of the application
 - Use ```make close``` to run ```docker-compose down``` and revert migration of the application
