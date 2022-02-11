@@ -4,6 +4,7 @@ import (
 	"TodoAPI/app/task/entities"
 	"TodoAPI/app/task/usecases"
 	"net/http"
+	"strconv"
 
 	"github.com/labstack/echo/v4"
 )
@@ -19,6 +20,8 @@ func InitTaskHandler(e *echo.Echo, taskUsecase usecases.TaskUsecaseProtocol) {
 
 	e.GET("/tasks", handler.Fetch)
 	e.POST("/tasks", handler.Store)
+	e.PUT("/tasks/:id", handler.Update)
+	e.DELETE("/tasks/:id", handler.Delete)
 }
 
 func (r *TaskHandler) Fetch(c echo.Context) error {
@@ -40,12 +43,6 @@ func (r *TaskHandler) Store(c echo.Context) error {
 	task.Title = c.FormValue("title")
 	task.Description = c.FormValue("description")
 
-	// err := c.Bind(&task)
-
-	// if err != nil {
-	// 	return c.JSON(http.StatusUnprocessableEntity, err.Error())
-	// }
-
 	ctx := c.Request().Context()
 
 	err := r.taskUsecase.Store(ctx, &task)
@@ -56,4 +53,71 @@ func (r *TaskHandler) Store(c echo.Context) error {
 
 	return c.JSON(http.StatusCreated, task)
 
+}
+
+func (r *TaskHandler) Update(c echo.Context) error {
+	paramId, errInt := strconv.Atoi(c.Param("id"))
+
+	if errInt != nil {
+		return c.JSON(http.StatusNotFound, map[string]interface{}{
+			"message": errInt.Error(),
+		})
+	}
+
+	isDone, errBool := strconv.ParseBool(c.FormValue("is_done"))
+
+	if errBool != nil {
+		return c.JSON(http.StatusNotFound, map[string]interface{}{
+			"message": errBool.Error(),
+		})
+	}
+
+	id := int64(paramId)
+
+	task := entities.Task{}
+	task.Id = id
+	task.Title = c.FormValue("title")
+	task.Description = c.FormValue("description")
+	task.IsDone = isDone
+
+	ctx := c.Request().Context()
+
+	err := r.taskUsecase.Update(ctx, &task, id)
+
+	if err != nil {
+		return c.JSON(http.StatusNotFound, map[string]interface{}{
+			"message": err.Error(),
+		})
+	}
+
+	return c.JSON(http.StatusOK, map[string]interface{}{
+		"message": "Updated successfully",
+	})
+}
+
+func (r *TaskHandler) Delete(c echo.Context) error {
+
+	paramId, err := strconv.Atoi(c.Param("id"))
+
+	if err != nil {
+		return c.JSON(http.StatusNotFound, map[string]interface{}{
+			"message": err.Error(),
+		})
+	}
+
+	id := int64(paramId)
+
+	ctx := c.Request().Context()
+
+	err = r.taskUsecase.Delete(ctx, id)
+
+	if err != nil {
+		return c.JSON(http.StatusNotFound, map[string]interface{}{
+			"message": err.Error(),
+		})
+	}
+
+	return c.JSON(http.StatusOK, map[string]interface{}{
+		"message": "Delete successfully",
+	})
 }

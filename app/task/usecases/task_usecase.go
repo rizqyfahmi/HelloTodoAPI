@@ -4,7 +4,6 @@ import (
 	"TodoAPI/app/task/entities"
 	"TodoAPI/app/task/repositories"
 	"context"
-	"fmt"
 	"math/rand"
 	"time"
 )
@@ -43,10 +42,14 @@ func (usecase *TaskUsecase) Store(c context.Context, task *entities.Task) error 
 	return nil
 }
 
-func (usecase *TaskUsecase) Update(c context.Context, task *entities.Task) error {
+func (usecase *TaskUsecase) Update(c context.Context, task *entities.Task, id int64) error {
 
 	ctx, cancel := context.WithTimeout(c, usecase.timeout)
 	defer cancel()
+
+	if _, errFind := usecase.taskRepo.FindByID(ctx, id); errFind != nil {
+		return errFind
+	}
 
 	task.UpdatedAt = time.Now()
 
@@ -77,14 +80,10 @@ func (usecase *TaskUsecase) Delete(c context.Context, id int64) error {
 	ctx, cancel := context.WithTimeout(c, usecase.timeout)
 	defer cancel()
 
-	result, err := usecase.taskRepo.FindByID(ctx, id)
+	err := usecase.taskRepo.Delete(ctx, id)
 
 	if err != nil {
 		return err
-	}
-
-	if result == (entities.Task{}) {
-		return fmt.Errorf(`task isn't found`)
 	}
 
 	return nil

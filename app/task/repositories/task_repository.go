@@ -5,7 +5,6 @@ import (
 	"context"
 	"database/sql"
 	"fmt"
-	"log"
 )
 
 type TaskRepository struct {
@@ -32,25 +31,23 @@ func (repo *TaskRepository) Store(ctx context.Context, task *entities.Task) erro
 		return errExec
 	}
 
-	id, errAffected := res.LastInsertId()
+	_, errAffected := res.LastInsertId()
 	if errAffected != nil {
 		return errAffected
 	}
-
-	log.Printf(string(id))
 
 	return nil
 }
 
 func (repo *TaskRepository) Update(ctx context.Context, task *entities.Task) error {
 
-	query := `UPDATE task SET title=?, description=?, updated_at=?`
+	query := `UPDATE task SET title=?, description=?, is_done=?, updated_at=? WHERE id=?`
 	stmt, errPrepare := repo.db.PrepareContext(ctx, query)
 	if errPrepare != nil {
 		return errPrepare
 	}
 
-	res, errExec := stmt.ExecContext(ctx, task.Id, task.Description, task.UpdatedAt)
+	res, errExec := stmt.ExecContext(ctx, task.Title, task.Description, task.IsDone, task.UpdatedAt, task.Id)
 	if errExec != nil {
 		return errExec
 	}
@@ -84,7 +81,7 @@ func (repo *TaskRepository) FindByID(ctx context.Context, id int64) (entities.Ta
 }
 
 func (repo *TaskRepository) Fetch(ctx context.Context) ([]entities.Task, error) {
-	query := `SELECT id, title, description, updated_at, created_at FROM task`
+	query := `SELECT id, title, description, is_done, updated_at, created_at FROM task`
 	rows, err := repo.db.QueryContext(ctx, query)
 
 	if err != nil {
@@ -94,7 +91,7 @@ func (repo *TaskRepository) Fetch(ctx context.Context) ([]entities.Task, error) 
 	tasks := make([]entities.Task, 0)
 	for rows.Next() {
 		task := entities.Task{}
-		err := rows.Scan(&task.Id, &task.Title, &task.Description, &task.UpdatedAt, &task.CreatedAt)
+		err := rows.Scan(&task.Id, &task.Title, &task.Description, &task.IsDone, &task.UpdatedAt, &task.CreatedAt)
 
 		if err != nil {
 			return nil, err

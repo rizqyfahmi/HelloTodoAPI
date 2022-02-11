@@ -1,0 +1,105 @@
+{
+	"variables": [],
+	"info": {
+		"name": "HelloTodoAPI",
+		"_postman_id": "eb1951f7-4eb8-046b-2643-00933d95e33c",
+		"description": "",
+		"schema": "https://schema.getpostman.com/json/collection/v2.0.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "Task Fetch",
+			"request": {
+				"url": "http://localhost:8081/tasks",
+				"method": "GET",
+				"header": [],
+				"body": {},
+				"description": ""
+			},
+			"response": []
+		},
+		{
+			"name": "Task Store",
+			"request": {
+				"url": "http://localhost:8081/tasks",
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/x-www-form-urlencoded",
+						"description": ""
+					}
+				],
+				"body": {
+					"mode": "urlencoded",
+					"urlencoded": [
+						{
+							"key": "title",
+							"value": "Hello Title Three",
+							"type": "text",
+							"description": ""
+						},
+						{
+							"key": "description",
+							"value": "Hello Description Three",
+							"type": "text",
+							"description": ""
+						}
+					]
+				},
+				"description": ""
+			},
+			"response": []
+		},
+		{
+			"name": "Task Delete",
+			"request": {
+				"url": "http://localhost:8081/tasks/3233",
+				"method": "DELETE",
+				"header": [],
+				"body": {},
+				"description": ""
+			},
+			"response": []
+		},
+		{
+			"name": "Task Update",
+			"request": {
+				"url": "http://localhost:8081/tasks/3709",
+				"method": "PUT",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/x-www-form-urlencoded",
+						"description": ""
+					}
+				],
+				"body": {
+					"mode": "urlencoded",
+					"urlencoded": [
+						{
+							"key": "title",
+							"value": "Hello Title Three",
+							"type": "text",
+							"description": ""
+						},
+						{
+							"key": "description",
+							"value": "Hello Description Three",
+							"type": "text",
+							"description": ""
+						},
+						{
+							"key": "is_done",
+							"value": "false",
+							"type": "text",
+							"description": ""
+						}
+					]
+				},
+				"description": ""
+			},
+			"response": []
+		}
+	]
+}
