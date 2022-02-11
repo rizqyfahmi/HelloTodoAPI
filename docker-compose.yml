@@ -1,0 +1,15 @@
+version: '3'
+
+services:
+  mysql-service:
+    image: mysql:5.7
+    restart: always
+    ports:
+      - 3306:3306
+    volumes:
+      - ./volumes/mysql:/var/lib/mysql
+    environment:
+      - MYSQL_DATABASE=todo
+      - MYSQL_USER=user
+      - MYSQL_PASSWORD=password
+      - MYSQL_ROOT_PASSWORD=rootpassword
