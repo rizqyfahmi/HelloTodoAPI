@@ -1,33 +1,38 @@
 {
-	"variables": [],
 	"info": {
+		"_postman_id": "94795b35-fd01-4ea8-bfae-a0ed8b7995aa",
 		"name": "HelloTodoAPI",
-		"_postman_id": "eb1951f7-4eb8-046b-2643-00933d95e33c",
-		"description": "",
-		"schema": "https://schema.getpostman.com/json/collection/v2.0.0/collection.json"
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
 	},
 	"item": [
 		{
 			"name": "Task Fetch",
 			"request": {
-				"url": "http://localhost:8081/tasks",
 				"method": "GET",
 				"header": [],
-				"body": {},
-				"description": ""
+				"url": {
+					"raw": "http://localhost:8081/restricted/tasks",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8081",
+					"path": [
+						"restricted",
+						"tasks"
+					]
+				}
 			},
 			"response": []
 		},
 		{
 			"name": "Task Store",
 			"request": {
-				"url": "http://localhost:8081/tasks",
 				"method": "POST",
 				"header": [
 					{
 						"key": "Content-Type",
-						"value": "application/x-www-form-urlencoded",
-						"description": ""
+						"value": "application/x-www-form-urlencoded"
 					}
 				],
 				"body": {
@@ -35,43 +40,60 @@
 					"urlencoded": [
 						{
 							"key": "title",
-							"value": "Hello Title Three",
-							"type": "text",
-							"description": ""
+							"value": "Hello Title Two",
+							"type": "text"
 						},
 						{
 							"key": "description",
-							"value": "Hello Description Three",
-							"type": "text",
-							"description": ""
+							"value": "Hello Description Two",
+							"type": "text"
 						}
 					]
 				},
-				"description": ""
+				"url": {
+					"raw": "http://localhost:8081/restricted/tasks",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8081",
+					"path": [
+						"restricted",
+						"tasks"
+					]
+				}
 			},
 			"response": []
 		},
 		{
 			"name": "Task Delete",
 			"request": {
-				"url": "http://localhost:8081/tasks/3233",
 				"method": "DELETE",
 				"header": [],
-				"body": {},
-				"description": ""
+				"url": {
+					"raw": "http://localhost:8081/restricted/tasks/3233",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8081",
+					"path": [
+						"restricted",
+						"tasks",
+						"3233"
+					]
+				}
 			},
 			"response": []
 		},
 		{
 			"name": "Task Update",
 			"request": {
-				"url": "http://localhost:8081/tasks/3709",
 				"method": "PUT",
 				"header": [
 					{
 						"key": "Content-Type",
-						"value": "application/x-www-form-urlencoded",
-						"description": ""
+						"value": "application/x-www-form-urlencoded"
 					}
 				],
 				"body": {
@@ -79,25 +101,166 @@
 					"urlencoded": [
 						{
 							"key": "title",
-							"value": "Hello Title Three",
-							"type": "text",
-							"description": ""
+							"value": "Hello Title One",
+							"type": "text"
 						},
 						{
 							"key": "description",
-							"value": "Hello Description Three",
-							"type": "text",
-							"description": ""
+							"value": "Hello Description One",
+							"type": "text"
 						},
 						{
 							"key": "is_done",
-							"value": "false",
-							"type": "text",
-							"description": ""
+							"value": "true",
+							"type": "text"
 						}
 					]
 				},
-				"description": ""
+				"url": {
+					"raw": "http://localhost:8081/restricted/tasks/3709",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8081",
+					"path": [
+						"restricted",
+						"tasks",
+						"3709"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Registration",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/x-www-form-urlencoded"
+					}
+				],
+				"body": {
+					"mode": "urlencoded",
+					"urlencoded": [
+						{
+							"key": "username",
+							"value": "rizqyfahmi@gmaill.com",
+							"type": "text"
+						},
+						{
+							"key": "password",
+							"value": "Hello123",
+							"type": "text"
+						}
+					]
+				},
+				"url": {
+					"raw": "http://localhost:8081/registration",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8081",
+					"path": [
+						"registration"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Binding",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "urlencoded",
+					"urlencoded": [
+						{
+							"key": "name",
+							"value": "Joe",
+							"type": "text"
+						},
+						{
+							"key": "email",
+							"value": "joe@labstack.com",
+							"type": "text"
+						}
+					]
+				},
+				"url": {
+					"raw": "http://localhost:8081/bind",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8081",
+					"path": [
+						"bind"
+					]
+				},
+				"description": "Generated from a curl request: \ncurl -X POST http://localhost:1323/users \\\n  -d 'name=Joe' \\\n  -d 'email=joe@labstack.com'\n"
+			},
+			"response": []
+		},
+		{
+			"name": "Login",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/x-www-form-urlencoded"
+					}
+				],
+				"body": {
+					"mode": "urlencoded",
+					"urlencoded": [
+						{
+							"key": "username",
+							"value": "rizqyfahmi@gmaill.com",
+							"type": "text"
+						},
+						{
+							"key": "password",
+							"value": "Hello123",
+							"type": "text"
+						}
+					]
+				},
+				"url": {
+					"raw": "http://localhost:8081/login",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8081",
+					"path": [
+						"login"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Refresh Token",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:8081/refresh-token",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8081",
+					"path": [
+						"refresh-token"
+					]
+				}
 			},
 			"response": []
 		}
