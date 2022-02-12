@@ -60,54 +60,38 @@ func (usecase *AuthUsecase) Registration(c context.Context, user *entities.User)
 	return nil
 }
 
-func (usecase *AuthUsecase) Login(c context.Context, username, password string) (map[string]interface{}, error) {
+func (usecase *AuthUsecase) Login(c echo.Context, username, password string) error {
 
-	ctx, cancel := context.WithTimeout(c, usecase.timeout)
+	rctx := c.Request().Context()
+	ctx, cancel := context.WithTimeout(rctx, usecase.timeout)
 	defer cancel()
 
 	user, err := usecase.repo.GetUser(ctx, username)
 
 	if err != nil {
-		return nil, err
+		return err
 	}
 
 	errBcrypt := bcrypt.CompareHashAndPassword(user.Password, []byte(password))
 	if errBcrypt != nil {
-		return nil, errBcrypt
+		return errBcrypt
 	}
 
-	accessToken, expAccessToken, errAccessToken := usecase.GenerateAccessToken(&user)
-	if errAccessToken != nil {
-		return nil, errAccessToken
-	}
+	generateAndSetToken(c, user)
 
-	refreshToken, expRefreshToken, errRefreshToken := usecase.GenerateRefreshToken(&user)
-	if errRefreshToken != nil {
-		return nil, errRefreshToken
-	}
-
-	result := map[string]interface{}{
-		"accessToken": map[string]interface{}{
-			"name":       accessTokenCookieName,
-			"token":      accessToken,
-			"expiration": expAccessToken,
-		},
-		"refreshToken": map[string]interface{}{
-			"name":       refreshTokenCookieName,
-			"token":      refreshToken,
-			"expiration": expRefreshToken,
-		},
-	}
-
-	return result, nil
+	return nil
 }
 
-func (usecase *AuthUsecase) RefreshToken(c echo.Context) (map[string]string, error) {
+func (usecase *AuthUsecase) RefreshToken(c echo.Context) error {
+
+	rctx := c.Request().Context()
+	ctx, cancel := context.WithTimeout(rctx, usecase.timeout)
+	defer cancel()
 
 	cookie, errCookie := c.Cookie(GetRefreshTokenName())
 
 	if errCookie != nil {
-		return nil, errCookie
+		return errCookie
 	}
 
 	token, errParse := jwt.ParseWithClaims(cookie.Value, &AuthClaims{}, func(t *jwt.Token) (interface{}, error) {
@@ -120,43 +104,27 @@ func (usecase *AuthUsecase) RefreshToken(c echo.Context) (map[string]string, err
 
 	if errParse != nil {
 		fmt.Print("Error Parse")
-		return nil, errParse
+		return errParse
 	}
 
 	claims, ok := token.Claims.(*AuthClaims)
 
 	if !ok || !token.Valid {
-		return nil, fmt.Errorf("invalid token")
+		return fmt.Errorf("invalid token")
 	}
-
-	rctx := c.Request().Context()
-	ctx, cancel := context.WithTimeout(rctx, usecase.timeout)
-	defer cancel()
 
 	user, err := usecase.repo.GetUser(ctx, claims.User.Username)
 
 	if err != nil {
-		return nil, err
+		return err
 	}
 
-	accessToken, expAccessToken, errAccessToken := usecase.GenerateAccessToken(&user)
-	if errAccessToken != nil {
-		return nil, errAccessToken
-	}
+	generateAndSetToken(c, user)
 
-	usecase.SetCookie(c, accessTokenCookieName, accessToken, expAccessToken)
-
-	refreshToken, expRefreshToken, errRefreshToken := usecase.GenerateRefreshToken(&user)
-	if errRefreshToken != nil {
-		return nil, errRefreshToken
-	}
-
-	usecase.SetCookie(c, refreshTokenCookieName, refreshToken, expRefreshToken)
-
-	return nil, nil
+	return nil
 }
 
-func (usecase *AuthUsecase) SetCookie(c echo.Context, name, token string, expiration time.Time) {
+func setCookie(c echo.Context, name, token string, expiration time.Time) {
 	cookie := new(http.Cookie)
 	cookie.Name = name
 	cookie.Value = token
@@ -167,13 +135,31 @@ func (usecase *AuthUsecase) SetCookie(c echo.Context, name, token string, expira
 	c.SetCookie(cookie)
 }
 
-func (usecase *AuthUsecase) GenerateAccessToken(user *entities.User) (string, time.Time, error) {
+func generateAndSetToken(c echo.Context, user entities.User) error {
+	accessToken, expAccessToken, errAccessToken := generateAccessToken(&user)
+	if errAccessToken != nil {
+		return errAccessToken
+	}
+
+	setCookie(c, accessTokenCookieName, accessToken, expAccessToken)
+
+	refreshToken, expRefreshToken, errRefreshToken := generateRefreshToken(&user)
+	if errRefreshToken != nil {
+		return errRefreshToken
+	}
+
+	setCookie(c, refreshTokenCookieName, refreshToken, expRefreshToken)
+
+	return nil
+}
+
+func generateAccessToken(user *entities.User) (string, time.Time, error) {
 	expirationTime := time.Now().Add(1 * time.Hour)
 
 	return generateToken(user, expirationTime, []byte(GetJWTSecret()))
 }
 
-func (usecase *AuthUsecase) GenerateRefreshToken(user *entities.User) (string, time.Time, error) {
+func generateRefreshToken(user *entities.User) (string, time.Time, error) {
 	expirationTime := time.Now().Add(24 * 7 * time.Hour)
 
 	return generateToken(user, expirationTime, []byte(GetRefreshJWTSecret()))

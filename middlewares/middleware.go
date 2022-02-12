@@ -33,7 +33,7 @@ func (m *Middleware) VerifyToken(next echo.HandlerFunc) echo.HandlerFunc {
 			})
 		}
 
-		token, errParse := jwt.Parse(cookie.Value, func(t *jwt.Token) (interface{}, error) {
+		token, errParse := jwt.ParseWithClaims(cookie.Value, &usecases.AuthClaims{}, func(t *jwt.Token) (interface{}, error) {
 			_, ok := t.Method.(*jwt.SigningMethodHMAC)
 
 			if !ok {

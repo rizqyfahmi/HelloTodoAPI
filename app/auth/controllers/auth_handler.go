@@ -4,7 +4,6 @@ import (
 	"TodoAPI/app/auth/entities"
 	"TodoAPI/app/auth/usecases"
 	"net/http"
-	"time"
 
 	"github.com/labstack/echo/v4"
 )
@@ -53,21 +52,13 @@ func (r *AuthHandler) Login(c echo.Context) error {
 	username := c.FormValue("username")
 	password := c.FormValue("password")
 
-	ctx := c.Request().Context()
-
-	result, err := r.authUsecase.Login(ctx, username, password)
+	err := r.authUsecase.Login(c, username, password)
 
 	if err != nil {
 		return c.JSON(http.StatusNotFound, map[string]interface{}{
 			"message": err.Error(),
 		})
 	}
-
-	accessToken := result["accessToken"].(map[string]interface{})
-	r.authUsecase.SetCookie(c, accessToken["name"].(string), accessToken["token"].(string), accessToken["expiration"].(time.Time))
-
-	refreshToken := result["refreshToken"].(map[string]interface{})
-	r.authUsecase.SetCookie(c, refreshToken["name"].(string), refreshToken["token"].(string), refreshToken["expiration"].(time.Time))
 
 	return c.JSON(http.StatusOK, map[string]interface{}{
 		"message": "Login successfully",
@@ -76,7 +67,7 @@ func (r *AuthHandler) Login(c echo.Context) error {
 
 func (r *AuthHandler) RefreshToken(c echo.Context) error {
 
-	_, err := r.authUsecase.RefreshToken(c)
+	err := r.authUsecase.RefreshToken(c)
 
 	if err != nil {
 		return c.JSON(http.StatusNotFound, map[string]interface{}{
