@@ -14,11 +14,11 @@ compose-down:
 
 migrate-up:
 	echo "Migrating database"
-	migrate -path migrations -database "mysql://user:password@tcp(localhost:3306)/todo" -verbose up 1
+	migrate -path migrations -database "mysql://user:password@tcp(localhost:3306)/todo" -verbose up
 
 migrate-down:
 	echo "Reverting database"
-	migrate -path migrations -database "mysql://user:password@tcp(localhost:3306)/todo" -verbose down 1
+	migrate -path migrations -database "mysql://user:password@tcp(localhost:3306)/todo" -verbose down
 
 run-app:
 	go run main.go

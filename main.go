@@ -1,10 +1,13 @@
 package main
 
 import (
-	delivery "TodoAPI/app/task/controllers"
-	"TodoAPI/app/task/repositories"
-	"TodoAPI/app/task/usecases"
-	"TodoAPI/middlewares"
+	AuthDelivery "TodoAPI/app/auth/controllers"
+	AuthRepository "TodoAPI/app/auth/repositories"
+	AuthUsecase "TodoAPI/app/auth/usecases"
+	TaskDelivery "TodoAPI/app/task/controllers"
+	TaskRepository "TodoAPI/app/task/repositories"
+	TaskUsecase "TodoAPI/app/task/usecases"
+	TodoMiddleware "TodoAPI/middlewares"
 	Mysql "TodoAPI/modules/mysql"
 	"log"
 	"net/http"
@@ -13,6 +16,12 @@ import (
 	_ "github.com/go-sql-driver/mysql"
 	"github.com/labstack/echo/v4"
 )
+
+type Request struct {
+	Id    string `json:"id" form:"id" query:"id"`
+	Name  string `json:"name" form:"name" query:"name"`
+	Email string `json:"email" form:"email" query:"email"`
+}
 
 func main() {
 
@@ -25,16 +34,39 @@ func main() {
 	}()
 
 	e := echo.New()
+	const timeout = 2 * time.Minute
 
-	middleware := middlewares.InitMiddleware()
-	repo := repositories.InitTaskRepository(db)
-	usecase := usecases.InitTaskUsecase(repo, 2*time.Minute)
-	delivery.InitTaskHandler(e, usecase)
+	mw := TodoMiddleware.InitMiddleware()
+	e.Use(mw.HandleCORS)
 
-	e.Use(middleware.HandleCORS)
+	restricted := e.Group("/restricted")
+	restricted.Use(mw.VerifyToken)
+	// TASK MODULE
+	taskRepo := TaskRepository.InitTaskRepository(db)
+	taskUsecase := TaskUsecase.InitTaskUsecase(taskRepo, timeout)
+	TaskDelivery.InitTaskHandler(e, restricted, taskUsecase)
+	// AUTH MODULE
+	authRepo := AuthRepository.InitAuthRepository(db)
+	authUsecase := AuthUsecase.InitAuthUsecase(authRepo, timeout)
+	AuthDelivery.InitAuthHandler(e, authUsecase)
+
 	e.GET("/", func(c echo.Context) error {
 		return c.JSON(http.StatusOK, map[string]interface{}{
 			"message": "Hello World",
+		})
+	})
+
+	e.POST("/bind", func(c echo.Context) error {
+		u := new(Request)
+		if err := c.Bind(u); err != nil {
+			return c.JSON(http.StatusOK, map[string]interface{}{
+				"message": err.Error(),
+			})
+		}
+
+		return c.JSON(http.StatusOK, map[string]interface{}{
+			"message": "Hello World",
+			"data":    u,
 		})
 	})
 

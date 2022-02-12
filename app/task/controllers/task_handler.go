@@ -13,15 +13,15 @@ type TaskHandler struct {
 	taskUsecase usecases.TaskUsecaseProtocol
 }
 
-func InitTaskHandler(e *echo.Echo, taskUsecase usecases.TaskUsecaseProtocol) {
+func InitTaskHandler(e *echo.Echo, group *echo.Group, taskUsecase usecases.TaskUsecaseProtocol) {
 	handler := &TaskHandler{
 		taskUsecase: taskUsecase,
 	}
 
-	e.GET("/tasks", handler.Fetch)
-	e.POST("/tasks", handler.Store)
-	e.PUT("/tasks/:id", handler.Update)
-	e.DELETE("/tasks/:id", handler.Delete)
+	group.GET("/tasks", handler.Fetch)
+	group.POST("/tasks", handler.Store)
+	group.PUT("/tasks/:id", handler.Update)
+	group.DELETE("/tasks/:id", handler.Delete)
 }
 
 func (r *TaskHandler) Fetch(c echo.Context) error {
