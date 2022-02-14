@@ -1,8 +1,8 @@
 package controllers
 
 import (
-	"TodoAPI/app/auth/entities"
-	"TodoAPI/app/auth/usecases"
+	"TodoAPI/application/auth/entities"
+	"TodoAPI/application/auth/usecases"
 	"net/http"
 
 	"github.com/labstack/echo/v4"

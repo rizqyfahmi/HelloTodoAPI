@@ -1,12 +1,12 @@
 package main
 
 import (
-	AuthDelivery "TodoAPI/app/auth/controllers"
-	AuthRepository "TodoAPI/app/auth/repositories"
-	AuthUsecase "TodoAPI/app/auth/usecases"
-	TaskDelivery "TodoAPI/app/task/controllers"
-	TaskRepository "TodoAPI/app/task/repositories"
-	TaskUsecase "TodoAPI/app/task/usecases"
+	AuthDelivery "TodoAPI/application/auth/controllers"
+	AuthRepository "TodoAPI/application/auth/repositories"
+	AuthUsecase "TodoAPI/application/auth/usecases"
+	TaskDelivery "TodoAPI/application/task/controllers"
+	TaskRepository "TodoAPI/application/task/repositories"
+	TaskUsecase "TodoAPI/application/task/usecases"
 	TodoMiddleware "TodoAPI/middlewares"
 	Mysql "TodoAPI/modules/mysql"
 	"log"

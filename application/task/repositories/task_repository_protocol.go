@@ -1,7 +1,7 @@
 package repositories
 
 import (
-	"TodoAPI/app/task/entities"
+	"TodoAPI/application/task/entities"
 	"context"
 )
 

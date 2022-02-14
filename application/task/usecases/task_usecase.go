@@ -1,8 +1,8 @@
 package usecases
 
 import (
-	"TodoAPI/app/task/entities"
-	"TodoAPI/app/task/repositories"
+	"TodoAPI/application/task/entities"
+	"TodoAPI/application/task/repositories"
 	"context"
 	"math/rand"
 	"time"

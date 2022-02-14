@@ -1,9 +1,5 @@
 .PHONY: compose-up compose-down migrate-up migrate-down run-app
 
-start: compose-up migrate-up run-app
-
-stop: migrate-down compose-down
-
 compose-up:
 	echo "Starting docker environment"
 	docker-compose -f docker-compose.yml up -d

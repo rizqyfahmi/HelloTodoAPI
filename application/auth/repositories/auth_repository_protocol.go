@@ -1,7 +1,7 @@
 package repositories
 
 import (
-	"TodoAPI/app/auth/entities"
+	"TodoAPI/application/auth/entities"
 	"context"
 )
 

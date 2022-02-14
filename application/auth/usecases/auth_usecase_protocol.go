@@ -1,7 +1,7 @@
 package usecases
 
 import (
-	"TodoAPI/app/auth/entities"
+	"TodoAPI/application/auth/entities"
 	"context"
 
 	"github.com/labstack/echo/v4"

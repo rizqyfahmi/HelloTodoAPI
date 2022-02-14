@@ -1,8 +1,8 @@
 package controllers
 
 import (
-	"TodoAPI/app/task/entities"
-	"TodoAPI/app/task/usecases"
+	"TodoAPI/application/task/entities"
+	"TodoAPI/application/task/usecases"
 	"net/http"
 	"strconv"
 

@@ -1,7 +1,7 @@
 package middlewares
 
 import (
-	"TodoAPI/app/auth/usecases"
+	"TodoAPI/application/auth/usecases"
 	"fmt"
 	"net/http"
 

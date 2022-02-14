@@ -1,8 +1,8 @@
 package usecases
 
 import (
-	"TodoAPI/app/auth/entities"
-	"TodoAPI/app/auth/repositories"
+	"TodoAPI/application/auth/entities"
+	"TodoAPI/application/auth/repositories"
 	"context"
 	"fmt"
 	"math/rand"

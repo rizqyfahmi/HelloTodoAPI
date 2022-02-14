@@ -17,7 +17,7 @@ type Mysql struct {
 
 func Connect() *sql.DB {
 	param := &Mysql{
-		Host:         "localhost",
+		Host:         "mysql-service",
 		Port:         "3306",
 		Username:     "user",
 		Password:     "password",
@@ -40,7 +40,7 @@ func Connect() *sql.DB {
 
 	if err = db.Ping(); err != nil {
 		log.Fatal("Error Ping!")
-		log.Fatal(err.Error())
+		log.Fatal(err)
 	}
 
 	return db
