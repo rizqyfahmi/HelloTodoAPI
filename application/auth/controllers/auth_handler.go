@@ -20,6 +20,7 @@ func InitAuthHandler(e *echo.Echo, authUsecase usecases.AuthUsecaseProtocol) {
 	e.POST("/registration", handler.Registration)
 	e.POST("/login", handler.Login)
 	e.POST("/refresh-token", handler.RefreshToken)
+	e.POST("/validate-token", handler.ValidateToken)
 }
 
 func (r *AuthHandler) Registration(c echo.Context) error {
@@ -70,12 +71,30 @@ func (r *AuthHandler) RefreshToken(c echo.Context) error {
 	err := r.authUsecase.RefreshToken(c)
 
 	if err != nil {
-		return c.JSON(http.StatusNotFound, map[string]interface{}{
+		return c.JSON(http.StatusOK, map[string]interface{}{
+			"status":  false,
 			"message": err.Error(),
 		})
 	}
 
 	return c.JSON(http.StatusOK, map[string]interface{}{
+		"status":  true,
 		"message": "Refresh token successfully",
+	})
+}
+
+func (r *AuthHandler) ValidateToken(c echo.Context) error {
+	err := r.authUsecase.ValidateToken(c)
+
+	if err != nil {
+		return c.JSON(http.StatusOK, map[string]interface{}{
+			"status":  false,
+			"message": err.Error(),
+		})
+	}
+
+	return c.JSON(http.StatusOK, map[string]interface{}{
+		"status":  true,
+		"message": "Validate token successfully",
 	})
 }

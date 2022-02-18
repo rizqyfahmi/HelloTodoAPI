@@ -124,6 +124,40 @@ func (usecase *AuthUsecase) RefreshToken(c echo.Context) error {
 	return nil
 }
 
+func (usecase *AuthUsecase) ValidateToken(c echo.Context) error {
+
+	rctx := c.Request().Context()
+	_, cancel := context.WithTimeout(rctx, usecase.timeout)
+	defer cancel()
+
+	cookie, errCookie := c.Cookie(GetAccessTokenName())
+
+	if errCookie != nil {
+		return errCookie
+	}
+
+	token, errParse := jwt.ParseWithClaims(cookie.Value, &AuthClaims{}, func(t *jwt.Token) (interface{}, error) {
+		if _, ok := t.Method.(*jwt.SigningMethodHMAC); !ok {
+			return nil, fmt.Errorf("unexpected signing method: %v", t.Header["alg"])
+		}
+
+		return []byte(GetJWTSecret()), nil
+	})
+
+	if errParse != nil {
+		fmt.Print("Error Parse")
+		return errParse
+	}
+
+	_, ok := token.Claims.(*AuthClaims)
+
+	if !ok || !token.Valid {
+		return fmt.Errorf("invalid token")
+	}
+
+	return nil
+}
+
 func setCookie(c echo.Context, name, token string, expiration time.Time) {
 	cookie := new(http.Cookie)
 	cookie.Name = name
