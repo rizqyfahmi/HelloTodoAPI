@@ -82,6 +82,18 @@ func (usecase *AuthUsecase) Login(c echo.Context, username, password string) err
 	return nil
 }
 
+func (usecase *AuthUsecase) Logout(c echo.Context) error {
+
+	rctx := c.Request().Context()
+	_, cancel := context.WithTimeout(rctx, usecase.timeout)
+	defer cancel()
+
+	setCookie(c, GetAccessTokenName(), "", time.Now().Add(-time.Hour))
+	setCookie(c, GetRefreshTokenName(), "", time.Now().Add(-time.Hour))
+
+	return nil
+}
+
 func (usecase *AuthUsecase) RefreshToken(c echo.Context) error {
 
 	rctx := c.Request().Context()

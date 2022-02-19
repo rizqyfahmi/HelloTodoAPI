@@ -19,6 +19,7 @@ func InitAuthHandler(e *echo.Echo, authUsecase usecases.AuthUsecaseProtocol) {
 
 	e.POST("/registration", handler.Registration)
 	e.POST("/login", handler.Login)
+	e.POST("/logout", handler.Logout)
 	e.POST("/refresh-token", handler.RefreshToken)
 	e.POST("/validate-token", handler.ValidateToken)
 }
@@ -63,6 +64,15 @@ func (r *AuthHandler) Login(c echo.Context) error {
 
 	return c.JSON(http.StatusOK, map[string]interface{}{
 		"message": "Login successfully",
+	})
+}
+
+func (r *AuthHandler) Logout(c echo.Context) error {
+	r.authUsecase.Logout(c)
+
+	return c.JSON(http.StatusOK, map[string]interface{}{
+		"status":  true,
+		"message": "Logout successfully",
 	})
 }
 
