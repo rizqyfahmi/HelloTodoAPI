@@ -29,7 +29,8 @@ func (m *Middleware) VerifyToken(next echo.HandlerFunc) echo.HandlerFunc {
 		cookie, errCookie := c.Cookie(usecases.GetAccessTokenName())
 
 		if errCookie != nil {
-			return c.JSON(http.StatusNotFound, map[string]interface{}{
+			return c.JSON(http.StatusOK, map[string]interface{}{
+				"status":  false,
 				"message": errCookie.Error(),
 			})
 		}
@@ -45,7 +46,8 @@ func (m *Middleware) VerifyToken(next echo.HandlerFunc) echo.HandlerFunc {
 		})
 
 		if errParse != nil {
-			return c.JSON(http.StatusNotFound, map[string]interface{}{
+			return c.JSON(http.StatusOK, map[string]interface{}{
+				"status":  false,
 				"message": errParse.Error(),
 			})
 		}
@@ -53,7 +55,8 @@ func (m *Middleware) VerifyToken(next echo.HandlerFunc) echo.HandlerFunc {
 		_, ok := token.Claims.(*usecases.AuthClaims)
 
 		if !ok || !token.Valid {
-			return c.JSON(http.StatusNotFound, map[string]interface{}{
+			return c.JSON(http.StatusOK, map[string]interface{}{
+				"status":  false,
 				"message": "invalid token",
 			})
 		}

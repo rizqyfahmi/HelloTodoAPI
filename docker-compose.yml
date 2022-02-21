@@ -1,18 +1,6 @@
 version: '2.3'
 
 services:
-  app-service:
-    container_name: todo-api
-    build: .
-    ports: 
-      - 8081:8081 
-    restart: on-failure
-    volumes:
-      - ./:/usr/src/app/
-    depends_on:
-      - mysql-service          # Uncomment this when using postgres.
-    networks:
-      - todo-app-network
   mysql-service:
     build: ./volumes/mysql
     container_name: todo-api-mysql
@@ -25,6 +13,18 @@ services:
       - MYSQL_USER=user
       - MYSQL_PASSWORD=password
       - MYSQL_ROOT_PASSWORD=rootpassword
+    networks:
+      - todo-app-network
+  app-service:
+    container_name: todo-api
+    build: .
+    ports: 
+      - 8081:8081 
+    restart: on-failure
+    volumes:
+      - ./:/usr/src/app/
+    depends_on:
+      - mysql-service          # Uncomment this when using postgres.
     networks:
       - todo-app-network
 networks:

@@ -30,12 +30,17 @@ func (r *TaskHandler) Fetch(c echo.Context) error {
 	result, err := r.taskUsecase.Fetch(ctx)
 
 	if err != nil {
-		return c.JSON(http.StatusInternalServerError, map[string]interface{}{
+		return c.JSON(http.StatusOK, map[string]interface{}{
+			"status":  false,
 			"message": err.Error(),
 		})
 	}
 
-	return c.JSON(http.StatusOK, result)
+	return c.JSON(http.StatusOK, map[string]interface{}{
+		"status":  true,
+		"message": "Successfully fetch data",
+		"data":    result,
+	})
 }
 
 func (r *TaskHandler) Store(c echo.Context) error {
