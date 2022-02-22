@@ -53,10 +53,17 @@ func (r *TaskHandler) Store(c echo.Context) error {
 	err := r.taskUsecase.Store(ctx, &task)
 
 	if err != nil {
-		return c.JSON(http.StatusInternalServerError, err.Error())
+		return c.JSON(http.StatusOK, map[string]interface{}{
+			"status":  false,
+			"message": err.Error(),
+		})
 	}
 
-	return c.JSON(http.StatusCreated, task)
+	return c.JSON(http.StatusOK, map[string]interface{}{
+		"status":  true,
+		"message": "Store successfully",
+		"data":    task,
+	})
 
 }
 
@@ -64,7 +71,8 @@ func (r *TaskHandler) Update(c echo.Context) error {
 	paramId, errInt := strconv.Atoi(c.Param("id"))
 
 	if errInt != nil {
-		return c.JSON(http.StatusNotFound, map[string]interface{}{
+		return c.JSON(http.StatusOK, map[string]interface{}{
+			"status":  false,
 			"message": errInt.Error(),
 		})
 	}
@@ -72,7 +80,8 @@ func (r *TaskHandler) Update(c echo.Context) error {
 	isDone, errBool := strconv.ParseBool(c.FormValue("is_done"))
 
 	if errBool != nil {
-		return c.JSON(http.StatusNotFound, map[string]interface{}{
+		return c.JSON(http.StatusOK, map[string]interface{}{
+			"status":  false,
 			"message": errBool.Error(),
 		})
 	}
@@ -90,12 +99,14 @@ func (r *TaskHandler) Update(c echo.Context) error {
 	err := r.taskUsecase.Update(ctx, &task, id)
 
 	if err != nil {
-		return c.JSON(http.StatusNotFound, map[string]interface{}{
+		return c.JSON(http.StatusOK, map[string]interface{}{
+			"status":  false,
 			"message": err.Error(),
 		})
 	}
 
 	return c.JSON(http.StatusOK, map[string]interface{}{
+		"status":  true,
 		"message": "Updated successfully",
 	})
 }
@@ -106,6 +117,7 @@ func (r *TaskHandler) Delete(c echo.Context) error {
 
 	if err != nil {
 		return c.JSON(http.StatusNotFound, map[string]interface{}{
+			"status":  false,
 			"message": err.Error(),
 		})
 	}
@@ -117,12 +129,14 @@ func (r *TaskHandler) Delete(c echo.Context) error {
 	err = r.taskUsecase.Delete(ctx, id)
 
 	if err != nil {
-		return c.JSON(http.StatusNotFound, map[string]interface{}{
+		return c.JSON(http.StatusOK, map[string]interface{}{
+			"status":  false,
 			"message": err.Error(),
 		})
 	}
 
 	return c.JSON(http.StatusOK, map[string]interface{}{
+		"status":  true,
 		"message": "Delete successfully",
 	})
 }
